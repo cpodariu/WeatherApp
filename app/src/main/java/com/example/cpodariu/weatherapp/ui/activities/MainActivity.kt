@@ -5,12 +5,10 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import com.example.cpodariu.weatherapp.Domain.commands.RequestForecastCommand
-import com.example.cpodariu.weatherapp.Domain.model.Forecast
 import com.example.cpodariu.weatherapp.ui.adapters.ForecastListAdapter
 import com.example.cpodariu.weatherapp.R
-import com.example.cpodariu.weatherapp.Request
+import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
@@ -19,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val forecastList = findViewById<RecyclerView>(R.id.forecast_list)
         forecastList.layoutManager = LinearLayoutManager(this)
 
         val url = "http://api.openweathermap.org/data/2.5/forecast/daily?" +
@@ -28,15 +25,8 @@ class MainActivity : AppCompatActivity() {
         doAsync() {
             val result = RequestForecastCommand("94043").execute()
             uiThread {
-                forecastList.adapter = ForecastListAdapter(result,
-                        object : ForecastListAdapter.OnItemClickListener {
-                            override fun invoke(forecast: Forecast) {
-                                toast(forecast.date)
-                            }
-                        })
+                forecastList.adapter = ForecastListAdapter(result) { toast(it.date) }
             }
         }
-
-
     }
 }
